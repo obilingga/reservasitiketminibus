@@ -20,6 +20,4 @@ cd laravel
 mkdir src
 docker-compose run --rm composer create-project --prefer-dist laravel/laravel .
 docker-compose up -d site
-docker-compose run --rm composer install
-docker-compose run --rm artisan key:generate
 ```

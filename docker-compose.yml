@@ -3,6 +3,9 @@ version: '3'
 networks:
   laravel:
 
+volumes: 
+  mysql_data:
+
 services:
   site:
     build:
@@ -16,25 +19,24 @@ services:
     depends_on:
       - php
       - mysql
+      - phpmyadmin
     networks:
       - laravel
 
   mysql:
-    image: mysql:5.7.29
+    image: mysql:5.7.32
     container_name: mysql
     restart: unless-stopped
     tty: true
     ports:
       - "3306:3306"
     volumes: 
-      - ./data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
     environment:
       MYSQL_DATABASE: homestead
       MYSQL_USER: homestead
       MYSQL_PASSWORD: secret
       MYSQL_ROOT_PASSWORD: secret
-      SERVICE_TAGS: dev
-      SERVICE_NAME: mysql
     networks:
       - laravel
 
@@ -85,5 +87,19 @@ services:
     working_dir: /var/www/html
     user: laravel
     entrypoint: ['php', '/var/www/html/artisan']
+    networks:
+      - laravel
+  
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin
+    restart: always
+    environment:
+      - PMA_HOST=mysql
+      - PMA_PORT=3306
+    depends_on:
+      - mysql
+    ports:
+      - 8080:80
     networks:
       - laravel
